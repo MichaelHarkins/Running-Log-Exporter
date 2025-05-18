@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	
+<meta name="description" content="Running-Log.com is a free online training log that is great for both individual and team use."/>
+<meta name="title" content="Running-Log.com - Your Online Solution for Training Logs"/>
+<title>Running-Log.com - Your Online Solution for Training Logs</title>
+
+<meta name="keywords" content="run, runner, running, runs, running-log, log, logbook, journal, jog, jogging, time, distance, race, races, racing, marathon, train, training, sports, fitness, cross-country, cross, country, track, track and field, track &amp; field, graph, graphs, mileage, marathon, 5k, 10k, mile" />
+	
+	<link href="/stylesheets/application.css?1350971813" media="screen" rel="stylesheet" type="text/css" />
+	<script src="/javascripts/prototype.js?1350971813" type="text/javascript"></script>
+<script src="/javascripts/effects.js?1350971813" type="text/javascript"></script>
+<script src="/javascripts/dragdrop.js?1350971813" type="text/javascript"></script>
+<script src="/javascripts/controls.js?1350971813" type="text/javascript"></script>
+<script src="/javascripts/application.js?1350971813" type="text/javascript"></script>
+	
+	<script type="text/javascript" src="/javascripts/c_config.js"></script>
+	<script type="text/javascript" src="/javascripts/c_smartmenus.js"></script>
+
+</head>
+
+<body>
+
+
+
+<div id="wrapper"> <!-- Beginning of the wrapper. This holds the spacing for the entire site. -->
+	
+	<div id="masthead"> <!-- The masthead controls the stuff that should appear on the top of all of the pages of the site. -->
+	    <div id="main_logo">
+	      <a href="/calendar"><img alt="Running-Log.com" border="0" src="/images/logo_small.png?1350971813" /></a>
+		  </div> <!-- End of the main_logo div -->
+
+			<div id="account_options"> <!-- This class controls the login/user name link in the masthead. -->
+			    
+		        Welcome, MJ
+		        |
+		        <a href="/athlete/edit">Settings</a>
+		        |
+		        <a href="/athlete/logout">Logout</a>
+		      
+		    </div><!-- End of the account_options class -->
+		</div> <!-- End of the masthead div -->
+		
+		
+		
+<div class="clearFix" style="width:100%;background:#E0ECF0;float:right;">
+	<ul id="Menu1" class="MM">
+	  <li><a class="NOLINK">My Log</a>
+			<ul>
+				<li><a href="/calendar">Calendar</a></li>
+				<li><a href="/stats">Statistics</a></li>
+				<li><a href="/workouts">Workouts</a></li>
+				<li><a href="/shoes">Shoes</a></li>
+			</ul>
+		</li>
+	  <li><a class="NOLINK">Teams</a>
+			        <ul>
+			          <li><a href="/teams">Overview</a></li>
+				
+			      
+                <li>
+                  <a href="/teams/26">Case Running Family</a>
+                  <ul>
+                    <li><a href="/teams/26">Overview</a></li>
+                    <li><a href="/teams/26/roster">Roster</a></li>
+                    <li><a href="/teams/26/workouts">Workouts</a></li>
+                    <li><a href="/teams/26/forum">Forum</a></li>
+                  </ul>
+                </li>
+            
+</ul>
+		</li>
+		<li>
+		  <a href="/store/1">Store</a>
+		  <ul>
+		    <li>
+		      <a href="/store/29">Men's Shoes</a>
+		      <ul>
+		        <li><a href="/store/30">Adidas</a></li>
+		        <li><a href="/store/31">Asics</a></li>
+		        <li><a href="/store/32">Brooks</a></li>
+		        <li><a href="/store/33">Mizuno</a></li>
+		        <li><a href="/store/34">New Balance</a></li>
+		        <li><a href="/store/35">Nike</a></li>
+		        <li><a href="/store/36">Saucony</a></li>
+		      </ul>
+		    </li>
+		    <li>
+		      <a href="/store/49">Men's Apparel</a>
+		    </li>
+		    <li>
+		      <a href="/store/3">Women's Shoes</a>
+		      <ul>
+		        <li><a href="/store/22">Adidas</a></li>
+		        <li><a href="/store/23">Asics</a></li>
+		        <li><a href="/store/24">Brooks</a></li>
+		        <li><a href="/store/25">Mizuno</a></li>
+		        <li><a href="/store/26">New Balance</a></li>
+		        <li><a href="/store/27">Nike</a></li>
+		        <li><a href="/store/28">Saucony</a></li>
+		      </ul>
+		    </li>
+		    <li><a href="/store/57">Women's Apparel</a></li>
+			  <li><a href="/store/40">iPods</a></li>
+			  <li><a href="/store/48">Books</a></li>
+			  <li><a href="/store/65">Watches</a></li>
+			  <li>
+			    <a class="NOLINK">Exercise Equipment</a>
+			    <ul>
+			      <li><a href="/store/42">Treadmills</a></li>
+			      <li><a href="/store/44">Elliptical Trainers</a></li>
+			      <li><a href="/store/45">Exercise Bikes</a></li>
+			      <li><a href="/store/46">Exercise Balls</a></li>
+			    </ul>
+			  </li>
+		  </ul>
+		</li>
+	 </ul>	
+</div> <!--End of the clearfix class-->
+
+
+		
+		
+		
+	<div id="body_wrapper">		
+			
+		<div class="page_Content"> <!-- Controls the main page content layout -->
+			<p style="color: green"></p>
+		      <div class="interior_wrapper">
+
+<h2>Add Workout</h2>
+
+
+
+<div>
+
+<form action="/workouts" class="new_workout" id="new_workout" method="post" onsubmit="new Ajax.Request('/workouts', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">
+
+  <p>
+    <input id="workout_submit1" name="commit" type="submit" value="Save" />
+  </p>
+
+  <table>
+  <tr>
+    <td align="right">Title:</td>
+    <td><input id="workout_title" name="workout[title]" size="50" type="text" /></td>
+  </tr>
+  <tr>
+	
+    <td><span style="float:right"><img alt="Date" src="/images/icons/date.png?1350971813" /></span></td>
+    <td>
+      <select id="workout_date_2i" name="workout[date(2i)]">
+<option value="1">January</option>
+<option value="2">February</option>
+<option value="3">March</option>
+<option selected="selected" value="4">April</option>
+<option value="5">May</option>
+<option value="6">June</option>
+<option value="7">July</option>
+<option value="8">August</option>
+<option value="9">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
+<select id="workout_date_3i" name="workout[date(3i)]">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option selected="selected" value="30">30</option>
+<option value="31">31</option>
+</select>
+<select id="workout_date_1i" name="workout[date(1i)]">
+<option value="2020">2020</option>
+<option value="2021">2021</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option selected="selected" value="2025">2025</option>
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+<option value="2028">2028</option>
+<option value="2029">2029</option>
+<option value="2030">2030</option>
+</select>
+
+      <select id="workout_time" name="workout[time]">
+        <option value="1">Morning</option>
+<option value="2">Afternoon</option>
+<option value="3">Night</option>
+      </select>
+    </td>
+    <td id="date_error"></td>
+  </tr>  
+  <tr>
+    <td><span style="float:right"><img alt="Weather_cloudy" src="/images/icons/weather_cloudy.png?1350971813" /></span></td>
+    <td>
+      <input id="workout_weather" name="workout[weather]" size="50" type="text" />
+    </td>
+  </tr>
+  <tr>
+    <td />
+    <td>
+      <select id="exercise_type" name="workout[exercise_type_id]">
+        <option value="1">Run</option>
+<option value="2">Walk</option>
+<option value="3">Bike</option>
+<option value="4">Swim</option>
+<option value="5">Elliptical</option>
+<option value="6">Row</option>
+<option value="7">Weights</option>
+<option value="8">Other</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" align="right">Comments:</td>
+    <td><textarea cols="50" id="workout_comments" name="workout[comments]" rows="6"></textarea></td>
+  </tr>
+</table>
+
+<script language="javascript" type="text/javascript">
+  function replaceLink(td_id, interval_type) {
+    td = document.getElementById(td_id);
+    if (td != null) { 
+      td.innerHTML = "<span class='grayed_out'><i>Adding " + interval_type + "...</i></span>";
+    }
+  }
+</script>
+
+<table class="content" cellspacing="0">
+  <thead>
+  <tr>
+    <th>Distance</th>
+    <th>Duration</th>
+    
+    
+    <th>Interval Type</th>
+    <th>Shoes</th>
+  </tr>
+</thead>
+  <tbody id="warmup">
+    
+
+
+<tr class="row_odd">
+  <td colspan="6" id="intervals_warmup_td">
+    
+    <a href="#" onclick="replaceLink('intervals_warmup_td', 'Warmup'); new Ajax.Request('/workouts/add_simple_interval?interval=warmup', {asynchronous:true, evalScripts:true}); return false;"><img alt="Add Warmup" border="0" src="/images/icons/add1.png?1350971813" title="Add Warmup" /></a>
+    <a href="#" onclick="replaceLink('intervals_warmup_td', 'Warmup'); new Ajax.Request('/workouts/add_simple_interval?interval=warmup', {asynchronous:true, evalScripts:true}); return false;">Add Warmup</a>
+  </td>
+</tr>
+
+  </tbody>
+  <tbody id="intervals">
+  
+    
+
+
+
+<tr class="row_even" id="intervals_workout_1_row">
+  <td>
+    <input id="intervals_workout_1_interval_id" name="intervals[workout][1][interval_id]" value="-1" type="hidden" />
+    <input id="intervals_workout_1_distance_error_id" name="intervals[workout][1][distance_error_id]" value="intervals_workout_1_distance_error" type="hidden" />
+    <input id="intervals_workout_1_duration_error_id" name="intervals[workout][1][duration_error_id]" value="intervals_workout_1_duration_error" type="hidden" />
+    
+    <a href="#" onclick="new Ajax.Request('/workouts/remove_interval?interval=intervals&amp;interval_row=intervals_workout_1_row', {asynchronous:true, evalScripts:true}); return false;"><img alt="Delete" border="0" src="/images/icons/delete1.png?1350971813" title="Delete" /></a>
+    
+    <input id="intervals_workout_1_distance" name="intervals[workout][1][distance]" size="5" type="text"  />
+    <select id="intervals_workout_1_units" name="intervals[workout][1][units]">
+      <option value="1" selected="selected">Miles</option>
+<option value="2">Kilometers</option>
+<option value="3">Meters</option>
+    </select>
+    <span id="intervals_workout_1_distance_error" style="color: red" />
+  </td>
+  <td>
+    <input id="intervals_workout_1_duration" name="intervals[workout][1][duration]" size="8" type="text" value='HH:MM:SS' class='grayed_out' onfocus="if (value == 'HH:MM:SS') {value=''; className=''}" onblur="if (value.length == 0) {value = 'HH:MM:SS'; className='grayed_out'}" />
+    <span id="intervals_workout_1_duration_error" style="color: red" />
+  </td>
+  
+  <td>
+  
+      <select id="intervals_workout_1_type_id" name="intervals[workout][1][type_id]">
+        <option />
+        <option value="12">Cruise</option>
+<option value="9">Easy</option>
+<option value="5">Fartlek</option>
+<option value="4">Hills</option>
+<option value="7">Interval</option>
+<option value="8">Long</option>
+<option value="3">Race</option>
+<option value="14">Recovery</option>
+<option value="11">Speed</option>
+<option value="13">Steady State</option>
+<option value="6">Tempo</option>
+<option value="10">Training</option>
+      </select>
+      
+  
+  </td>
+  <td>
+    
+    &nbsp;
+    
+  </td>
+</tr>
+
+
+  
+  </tbody>
+  <tbody>
+    <tr>
+      <td colspan="6" id="add_interval"><a href="#" onclick="replaceLink('add_interval', 'Interval'); new Ajax.Request('/workouts/add_interval?interval_count=2', {asynchronous:true, evalScripts:true}); return false;"><img alt="Add Interval" border="0" src="/images/icons/add1.png?1350971813" title="Add Interval" /></a>
+<a href="#" onclick="replaceLink('add_interval', 'Interval'); new Ajax.Request('/workouts/add_interval?interval_count=2', {asynchronous:true, evalScripts:true}); return false;">Add Interval</a>
+</td>
+    </tr>
+  </tbody>
+  <tbody id="cooldown">
+    
+
+
+<tr class="row_odd">
+  <td colspan="6" id="intervals_cooldown_td">
+    
+    <a href="#" onclick="replaceLink('intervals_cooldown_td', 'Cooldown'); new Ajax.Request('/workouts/add_simple_interval?interval=cooldown', {asynchronous:true, evalScripts:true}); return false;"><img alt="Add Cooldown" border="0" src="/images/icons/add1.png?1350971813" title="Add Cooldown" /></a>
+    <a href="#" onclick="replaceLink('intervals_cooldown_td', 'Cooldown'); new Ajax.Request('/workouts/add_simple_interval?interval=cooldown', {asynchronous:true, evalScripts:true}); return false;">Add Cooldown</a>
+  </td>
+</tr>
+
+  </tbody>
+</table>
+
+
+  
+  <p>
+    <input id="workout_submit2" name="commit" type="submit" value="Save" />
+  </p>
+</form>
+
+</div>
+
+</div> <!-- End of the interior_wrapper class -->
+
+			</div> <!-- End of the page_Content class -->
+
+			<div class="footer"> <!-- Controls the page's footer -->
+			  	<ul>
+	  
+		<li><a href="http://running-log.com/about">About Us</a></li>
+		<li><a href="http://running-log.com/contact">Contact</a></li>
+		<!--<li><a href="http://running-log.com/termsofservice">Terms of Service</a></li> -->
+		<!--<li><a href="http://running-log.com/privacy">Privacy</a></li>-->
+		<li><a href="http://blog.running-log.com">Blog</a></li>
+		<li id="footer_last">&copy; 2001-2025 Fastfoot Software</li>
+	</ul>
+
+			</div> <!-- End of the footer class -->
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3779013-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+	  
+
+</div> <!-- End of the body_wrapper div -->
+</div> <!-- End of the wrapper div -->
+
+</body>
+</html> 

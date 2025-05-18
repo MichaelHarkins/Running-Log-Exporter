@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "runninglog"
+version = "0.1.0"
+description = "Modular CLI toolkit for Running-Log.com export and Garmin integration"
+authors = [{name = "MJ Harkins"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.8"
+dependencies = [
+    "rich",
+    "httpx",
+    "beautifulsoup4",
+    "lxml",
+    "tenacity",
+    "pytz",
+    "typer[all]",
+    "pydantic",
+    "dateparser",
+    "aiofiles"
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Utilities",
+    "Environment :: Console"
+]
+
+[project.urls]
+Homepage = "https://github.com/MichaelHarkins/Running-Log-Exporter"
+Documentation = "https://github.com/MichaelHarkins/Running-Log-Exporter#readme"
+Issues = "https://github.com/MichaelHarkins/Running-Log-Exporter/issues"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "pytest",
+    "isort",
+    "autoflake"
+]
+
+[project.scripts]
+runninglog = "runninglog.cli.typer_main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["runninglog*"]
+
+[tool.isort]
+profile = "black"
+line_length = 120

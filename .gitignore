@@ -1,0 +1,75 @@
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+.venv.bak/
+
+# Athlete-specific output, debug, state, and journal directories
+*/output/
+*/debug/
+*/state/
+*/journal/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Editor directories and files
+.vscode/
+.idea/
+*.code-workspace
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test and coverage output
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Miscellaneous
+*.sqlite3
+*.db
+*.dat
+*.pid
+*.seed
+*.orig
+*.rej
+
+# Ignore debug HTML if not needed in repo
+debug/
