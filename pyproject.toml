@@ -20,7 +20,9 @@ dependencies = [
     "typer[all]",
     "pydantic",
     "dateparser",
-    "aiofiles"
+    "aiofiles",
+    "garminconnect",
+    "garth"
 ]
 classifiers = [
     "License :: OSI Approved :: MIT License",
@@ -53,6 +55,7 @@ dev = [
 
 [project.scripts]
 runninglog = "runninglog.cli.typer_main:app"
+garmin-upload = "uploader.garmin_cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]

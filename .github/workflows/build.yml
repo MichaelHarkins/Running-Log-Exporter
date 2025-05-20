@@ -1,40 +1,86 @@
-name: Build and Test
+name: Build and Release Binaries
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build binary for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: runninglog-linux
+            asset_name: runninglog-linux
+          - os: windows-latest
+            artifact_name: runninglog-windows
+            asset_name: runninglog-windows.exe
+          - os: macos-latest
+            artifact_name: runninglog-macos
+            asset_name: runninglog-macos
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install .[all]
-          pip install black flake8 pytest
+          pip install -e ".[dev]"
+          pip install pyinstaller
 
-      - name: Check formatting with Black
-        run: black --check .
+      - name: Build binary with PyInstaller
+        run: |
+          pyinstaller runninglog.spec
 
-      - name: Lint with flake8
-        run: flake8 .
+      - name: Create zip archive
+        shell: bash
+        run: |
+          cd dist
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            zip -r ${{ matrix.artifact_name }}.zip runninglog.exe
+          else
+            zip -r ${{ matrix.artifact_name }}.zip runninglog
+          fi
 
-      - name: Run tests
-        run: pytest
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.artifact_name }}.zip
+          retention-days: 5
 
-      # Optionally, build the package
-      - name: Install build tool
-        run: python -m pip install build
+  release:
+    name: Release binaries
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
 
-      - name: Build package
-        run: python -m build
+      - name: Display structure of downloaded files
+        run: ls -R dist-artifacts
+      
+      - name: Upload binaries to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist-artifacts/runninglog-linux/runninglog-linux.zip
+            dist-artifacts/runninglog-windows/runninglog-windows.zip
+            dist-artifacts/runninglog-macos/runninglog-macos.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,8 @@ import httpx
 import typer
 from rich.progress import Progress
 
-from runninglog.core.export import parse_tcx_to_workout_segment, write_journal_file
+from runninglog.core.export import write_journal_file
+from runninglog.core.types import Workout
 from runninglog.core.orchestrator import run_full_export
 from runninglog.core.state import ExportState
 from runninglog.utils.config import get_config
@@ -166,12 +167,12 @@ def export(
             state_path,
             output_subdir,
         )
-        tcx_files = list(output_subdir.glob("*.tcx"))
-        for f in tcx_files:
+        json_files = list(output_subdir.glob("*.json"))
+        for f in json_files:
             try:
                 f.unlink()
             except Exception as e:
-                logger.warning(f"Could not delete TCX file {f}: {e}")
+                logger.warning(f"Could not delete JSON file {f}: {e}")
         if state_path.exists():
             state_path.unlink()
         else:
@@ -192,13 +193,13 @@ def export(
                     ):
                         state_to_update.done_wids.remove(wid)
                         logger.info(f"Removed WID {wid} from state file.")
-                    tcx_files = list(output_subdir.glob(f"*wid{wid}_seg*.tcx"))
-                    for f in tcx_files:
+                    json_files = list(output_subdir.glob(f"*wid{wid}.json"))
+                    for f in json_files:
                         try:
                             f.unlink()
-                            logger.info(f"Deleted TCX file for WID {wid}: {f}")
+                            logger.info(f"Deleted JSON file for WID {wid}: {f}")
                         except Exception as e:
-                            logger.warning(f"Could not delete TCX file {f}: {e}")
+                            logger.warning(f"Could not delete JSON file {f}: {e}")
                 logger.info(
                     "[cyan]--refresh-wids specified: Reset WIDs %s in %s and deleted their TCX files in %s before export.[/cyan]",
                     refresh_wids_list,
@@ -207,12 +208,12 @@ def export(
                 )
             else:
                 state_to_update.done_wids.clear()
-                tcx_files = list(output_subdir.glob("*.tcx"))
-                for f in tcx_files:
+                json_files = list(output_subdir.glob("*.json"))
+                for f in json_files:
                     try:
                         f.unlink()
                     except Exception as e:
-                        logger.warning(f"Could not delete TCX file {f}: {e}")
+                        logger.warning(f"Could not delete JSON file {f}: {e}")
                 logger.info(
                     "[cyan]--refresh-all specified: Reset all processed WIDs in %s and deleted all TCX files in %s before export.[/cyan]",
                     state_path,
@@ -339,27 +340,29 @@ def create_journal(
     else:
         out_file = journal_dir / "journal.md"
 
-    tcx_files = sorted(tcx_dir.glob("*.tcx"))
-    if not tcx_files:
+    json_files = sorted(tcx_dir.glob("*.json"))
+    if not json_files:
         logger.info(
-            f"[yellow]No TCX files found in the directory {tcx_dir} for journal creation.[/yellow]"
+            f"[yellow]No JSON files found in the directory {tcx_dir} for journal creation.[/yellow]"
         )
         return
-    segments = []
-    for tcx_file in tcx_files:
-        seg = parse_tcx_to_workout_segment(tcx_file, timezone)
-        if seg:
-            segments.append(seg)
-    if not segments:
+    workouts = []
+    for json_file in json_files:
+        try:
+            workout = Workout.parse_file(json_file)
+            workouts.append(workout)
+        except Exception as e:
+            logger.warning(f"Could not parse JSON workout file {json_file}: {e}")
+    if not workouts:
         logger.info(
-            f"[yellow]No valid workout segments found in {tcx_dir} to create journal.[/yellow]"
+            f"[yellow]No valid workouts found in {tcx_dir} to create journal.[/yellow]"
         )
         return
 
     async def _run():
-        await write_journal_file(segments, out_file)
+        await write_journal_file(workouts, out_file)
         logger.info(
-            f"[green]Journal written to {out_file} ({len(segments)} segments).[/green]"
+            f"[green]Journal written to {out_file} ({len(workouts)} workouts).[/green]"
         )
 
     asyncio.run(_run())

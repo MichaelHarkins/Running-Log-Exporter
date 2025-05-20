@@ -14,13 +14,13 @@ from rich.progress import Progress
 
 from runninglog.utils.config import get_config
 from runninglog.utils.console import get_console
-from runninglog.utils.error_handler import with_async_generator_error_handling
+from runninglog.utils.error_handler import with_async_error_handling
 from runninglog.utils.http_client import RateLimiter, fetch, get_with_rate_limit
 from runninglog.utils.progress import ProgressReporter
 
 from .constants import BASE, WO_URL
 from .state import ExportState
-from .types import WorkoutSegment
+from .types import Workout, WorkoutSegment
 from .utils import _parse_time, gather_date_strings
 
 logger = logging.getLogger(__name__)
@@ -80,18 +80,20 @@ def parse_workout_date(
         logger.error(err_msg)
         raise ValueError(err_msg)
     hour = {"morning": 8, "afternoon": 14, "night": 20}.get(tod, 12)
-    parsed_date = dt.datetime(year, month_num, day, hour, 0, 0)
-    logger.debug(f"WID {wid}: Parsed '{raw}' to datetime {parsed_date}")
-    return parsed_date
+    from zoneinfo import ZoneInfo
+    naive_dt = dt.datetime(year, month_num, day, hour, 0, 0)
+    aware_dt = naive_dt.replace(tzinfo=ZoneInfo("America/New_York"))
+    logger.debug(f"WID {wid}: Parsed '{raw}' to datetime {aware_dt.isoformat()}")
+    return aware_dt
 
 
-@with_async_generator_error_handling(context="scrape_workout", show_traceback=True)
+@with_async_error_handling(context="scrape_workout", show_traceback=True)
 async def scrape_workout(
     client: httpx.AsyncClient,
     aid: int,
     wid: int,
     effective_athlete_id_for_debug: Optional[int] = None,
-) -> AsyncIterator[WorkoutSegment]:
+) -> Workout:
     url = WO_URL.format(wid=wid, aid=aid)
     logger.debug(f"Scraping workout WID: {wid}, URL: {url}")
     html = ""
@@ -118,21 +120,11 @@ async def scrape_workout(
         logger.debug(f"WID {wid}: BeautifulSoup parsing complete")
 
         # Date parsing is now strict and can raise ValueError
-        try:
-            date = parse_workout_date(
-                soup,
-                wid=wid,
-                effective_athlete_id_for_debug=effective_athlete_id_for_debug,
-            )
-        except ValueError as e_date_parse:
-            logger.critical(
-                f"WID {wid}: CRITICAL - Date parsing failed due to strict rules or unparsable content at expected location: {e_date_parse}. Skipping this workout."
-            )
-            # Re-raise the exception to signal to the caller that this WID cannot be processed.
-            # The caller (e.g., run_one_wid) should handle this, possibly by marking the WID as failed.
-            raise
-            # If we didn't want to re-raise and instead just skip yielding:
-            # return # This would silently skip the workout if date parsing fails.
+        date = parse_workout_date(
+            soup,
+            wid=wid,
+            effective_athlete_id_for_debug=effective_athlete_id_for_debug,
+        )
 
         logger.debug(
             f"WID {wid}: Date parsing complete ({date}), proceeding to exercise type/comments/table parsing"
@@ -181,23 +173,17 @@ async def scrape_workout(
         meta_desc = soup.find("meta", attrs={"name": "description"})
         if meta_desc and meta_desc.get("content"):
             meta_fields["description"] = meta_desc["content"].strip()
-        # Build structured META block for notes
-        meta_block = "META:" + ";".join(f"{k}={v}" for k, v in meta_fields.items())
-        # Set main fields from meta_fields
-        comment = meta_fields.get("comments", "")
-        ex_type = meta_fields.get("exercise_type", "Running")
-        ex_type_lower = ex_type.lower()
-        if "run" in ex_type_lower or "running" in ex_type_lower:
-            ex_type = "Running"
-        elif "bike" in ex_type_lower or "cycling" in ex_type_lower:
-            ex_type = "Biking"
-        else:
-            ex_type = "Other"
-        table = soup.find("table", class_="content")
+
+        # Always include date in meta_fields
+        meta_fields["date"] = date
+
+        # Parse segments (old logic, direct port)
+        segments = []
         segments_yielded_count = 0
         yielded_any = False
         if not table:
             logger.debug(f"No workout found for WID {wid} ({url}).")
+            comment = meta_fields.get("comments", "")
             if not comment:
                 logger.warning(f"No workout or note found for WID {wid} ({url}).")
         else:
@@ -240,22 +226,17 @@ async def scrape_workout(
                         f"WID {wid if wid else 'Unknown'}: Skipping segment because both miles and seconds are 0."
                     )
                     continue
-                # Build per-segment meta block including interval_type if present
-                seg_meta_fields = dict(meta_fields)  # Copy global meta_fields
+                seg_meta_fields = dict(meta_fields)
                 if interval_type:
                     seg_meta_fields["interval_type"] = interval_type
-                seg_meta_block = "META:" + ";".join(
-                    f"{k}={v}" for k, v in seg_meta_fields.items()
-                )
-                yield WorkoutSegment(
-                    date=date,
-                    exercise=ex_type,
-                    comment=seg_meta_block,
-                    miles=miles,
-                    secs=secs,
-                    index=idx,
-                    weather=seg_meta_fields.get("weather"),
-                    interval_type=seg_meta_fields.get("interval_type"),
+                segments.append(
+                    WorkoutSegment(
+                        distance_miles=miles,
+                        duration_seconds=secs,
+                        interval_type=seg_meta_fields.get("interval_type"),
+                        shoes=seg_meta_fields.get("shoes"),
+                        pace=None
+                    )
                 )
                 segments_yielded_count += 1
                 yielded_any = True
@@ -263,19 +244,27 @@ async def scrape_workout(
             logger.info(
                 f"WID {wid}: No workout or note found or no segments. Logging as 0-mile run for export completeness."
             )
-            yield (
+            segments = [
                 WorkoutSegment(
-                    date=date,
-                    exercise=ex_type,
-                    comment=meta_block,
-                    miles=0.0,
-                    secs=0,
-                    index=1,
-                    weather=meta_fields.get("weather"),
+                    distance_miles=0.0,
+                    duration_seconds=0,
                     interval_type=meta_fields.get("interval_type"),
-                ),
-                meta_block,
-            )
+                    shoes=meta_fields.get("shoes"),
+                    pace=None
+                )
+            ]
+        workout = Workout(
+            title=meta_fields.get("title"),
+            date=meta_fields.get("date"),
+            exercise_type=meta_fields.get("exercise_type"),
+            weather=meta_fields.get("weather"),
+            comments=meta_fields.get("comments"),
+            total_distance_miles=sum(s.distance_miles for s in segments),
+            total_duration_seconds=sum(s.duration_seconds or 0 for s in segments),
+            segments=segments,
+            exported_from="running-log"
+        )
+        return workout
     except Exception as e_parse:
         console.print(
             f"[red]⚠️  Error parsing segments for workout {wid} ({url}) (after date parsing): {e_parse}[/red]"

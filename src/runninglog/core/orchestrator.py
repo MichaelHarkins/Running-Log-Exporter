@@ -9,68 +9,35 @@ from runninglog.utils.console import get_console
 from runninglog.utils.error_handler import with_async_error_handling
 from runninglog.utils.http_client import HttpClientFactory, RateLimiter
 
-from .export import write_tcx
+from .export import write_json_workout
 from .scrape import scrape_all_wids_from_workout_list_pages, scrape_workout
 from .state import ExportState
+from .types import Workout, WorkoutSegment
 
 logger = logging.getLogger(__name__)
 console = get_console()  # Use singleton console
 
 
-def audit_exports(export_dir: Path, state_file: Path) -> Dict[str, Any]:
-    """Compare TCX files in export_dir to done_wids in state_file."""
-    state = ExportState.load(state_file)
-    if not state.done_wids:
-        return {"status": "empty", "message": "No WIDs in state file."}
-    tcx_files = list(export_dir.glob("*_wid*_seg*.tcx"))
-    found_wids = set()
-    for f in tcx_files:
-        parts = f.name.split("_wid")
-        if len(parts) > 1:
-            try:
-                wid = int(parts[1].split("_")[0])
-                found_wids.add(wid)
-            except Exception:
-                continue
-    missing = sorted(state.done_wids - found_wids)
-    extra = sorted(found_wids - state.done_wids)
-    return {
-        "status": "ok",
-        "total_state": len(state.done_wids),
-        "total_files": len(found_wids),
-        "missing": missing,
-        "extra": extra,
-    }
+# (Removed audit_exports: TCX audit logic is obsolete in JSON-only workflow)
 
 
 @with_async_error_handling(context="run_one_wid", show_traceback=True)
 async def run_one_wid(
     wid: int, athlete_id: str, output_dir: Path, timezone: str = "UTC"
 ) -> Dict[str, Any]:
-    """Scrape and export a single workout by WID."""
-    segments = []
+    """Scrape and export a single workout by WID as a JSON file."""
     client = HttpClientFactory.create_client(
         follow_redirects=True, timeout=60.0, max_keepalive=5, max_connections=10
     )
     try:
-        workout_generator = scrape_workout(client, int(athlete_id), wid)
-        async for seg in workout_generator:
-            if isinstance(seg, tuple):
-                segments.append(seg)
-            else:
-                segments.append((seg, ""))
-        if not segments:
+        workout = await scrape_workout(client, int(athlete_id), wid)
+        if not workout or not workout.segments:
             return {"status": "empty", "wid": wid}
         output_dir.mkdir(parents=True, exist_ok=True)
-        files = []
-        for segment, desc in segments:
-            fname = (
-                f"{segment.date.date().isoformat()}_wid{wid}_seg{segment.index:02d}.tcx"
-            )
-            path = output_dir / fname
-            write_tcx(segment, path, timezone, description=desc)
-            files.append(str(path))
-        return {"status": "ok", "wid": wid, "files": files}
+        fname = f"{workout.date.date().isoformat()}_wid{wid}.json"
+        path = output_dir / fname
+        write_json_workout(workout, path)
+        return {"status": "ok", "wid": wid, "files": [str(path)]}
     except Exception as e:
         logger.error(f"Error processing WID {wid}: {e}", exc_info=True)
         return {"status": "error", "wid": wid, "error": str(e)}
