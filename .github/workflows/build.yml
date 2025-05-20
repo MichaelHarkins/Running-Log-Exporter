@@ -95,4 +95,4 @@ jobs:
             dist-artifacts/runninglog-windows/runninglog-windows.zip
             dist-artifacts/runninglog-macos/runninglog-macos.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
