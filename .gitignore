@@ -11,7 +11,7 @@ build/
 .eggs/
 pip-wheel-metadata/
 *.manifest
-*.spec
+# *.spec
 
 # Virtual environments
 env/
