@@ -40,6 +40,10 @@ jobs:
           pip install -e ".[dev]"
           pip install pyinstaller
 
+      - name: List current directory contents
+        run: |
+          ls -l
+
       - name: Build binary with PyInstaller
         run: |
           pyinstaller runninglog.spec
