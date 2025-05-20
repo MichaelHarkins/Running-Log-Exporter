@@ -48,29 +48,42 @@ jobs:
         run: |
           ls -l
 
-      - name: Build binary with PyInstaller
+      - name: Build runninglog binary with PyInstaller
         run: |
           pyinstaller runninglog.spec
 
-      - name: Create zip archive (Linux/macOS)
+      - name: Build Garmin uploader binary with PyInstaller
+        run: |
+          pyinstaller --onefile src/uploader/garmin_cli.py --name garmin-uploader
+
+      - name: Create zip archives (Linux/macOS)
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           cd dist
           zip -r ${{ matrix.artifact_name }}.zip runninglog
+          zip -r garmin-uploader-${{ matrix.os }}.zip garmin-uploader
 
-      - name: Create zip archive (Windows)
+      - name: Create zip archives (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           cd dist
           Compress-Archive -Path runninglog.exe -DestinationPath ${{ matrix.artifact_name }}.zip
+          Compress-Archive -Path garmin-uploader.exe -DestinationPath garmin-uploader-${{ matrix.os }}.zip
 
-      - name: Upload binary artifact
+      - name: Upload runninglog binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: dist/${{ matrix.artifact_name }}.zip
+          retention-days: 5
+
+      - name: Upload Garmin uploader binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: garmin-uploader-${{ matrix.os }}
+          path: dist/garmin-uploader-${{ matrix.os }}.zip
           retention-days: 5
 
   release:
@@ -91,8 +104,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            # RunningLog binaries
             dist-artifacts/runninglog-linux/runninglog-linux.zip
             dist-artifacts/runninglog-windows/runninglog-windows.zip
             dist-artifacts/runninglog-macos/runninglog-macos.zip
+            # Garmin uploader binaries
+            dist-artifacts/garmin-uploader-ubuntu-latest/garmin-uploader-ubuntu-latest.zip
+            dist-artifacts/garmin-uploader-windows-latest/garmin-uploader-windows-latest.zip
+            dist-artifacts/garmin-uploader-macos-latest/garmin-uploader-macos-latest.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
