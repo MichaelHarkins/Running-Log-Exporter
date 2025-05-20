@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Garmin uploader binary with PyInstaller
         run: |
-          pyinstaller --onefile src/uploader/garmin_cli.py --name garmin-uploader
+          pyinstaller garmin-uploader.spec
 
       - name: Create zip archives (Linux/macOS)
         if: matrix.os != 'windows-latest'
@@ -71,6 +71,10 @@ jobs:
           cd dist
           Compress-Archive -Path runninglog.exe -DestinationPath ${{ matrix.artifact_name }}.zip
           Compress-Archive -Path garmin-uploader.exe -DestinationPath garmin-uploader-${{ matrix.os }}.zip
+
+      - name: List dist directory before artifact upload
+        run: |
+          ls -l dist
 
       - name: Upload runninglog binary artifact
         uses: actions/upload-artifact@v4
