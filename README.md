@@ -1,15 +1,3 @@
-## Garmin Uploader Environment Variables
-
-Before using the Garmin uploader CLI, you must set the following environment variables in your shell:
-
-```sh
-export GARMIN_EMAIL="your-email@example.com"
-export GARMIN_PASSWORD="your-garmin-password"
-export GARMINTOKENS=/Users/youruser/.garminconnect
-```
-
-Replace the values with your actual Garmin Connect credentials and token directory. These variables are required for authentication and token management.
-
 The RunningLog Exporter CLI is a robust, Typer-based command-line toolkit for exporting, organizing, and journaling workout data from running-log.com. It is designed for flexibility, clean organization, and reliable downstream processing.
 
 ## Features
@@ -484,3 +472,17 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribut
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Garmin Uploader Environment Variables
+
+Before using the Garmin uploader CLI, you must set the following environment variables in your shell:
+
+```sh
+export GARMIN_EMAIL="your-email@example.com"
+export GARMIN_PASSWORD="your-garmin-password"
+export GARMINTOKENS=/Users/youruser/.garminconnect
+```
+
+Replace the values with your actual Garmin Connect credentials and token directory. These variables are required for authentication and token management.

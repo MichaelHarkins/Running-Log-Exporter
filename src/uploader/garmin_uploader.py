@@ -15,7 +15,7 @@ import os
 import sys
 from pathlib import Path
 import logging
-from typing import Optional, List, Dict
+from typing import Optional
 
 from rich.console import Console
 from rich.logging import RichHandler

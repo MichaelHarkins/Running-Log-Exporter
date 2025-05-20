@@ -203,7 +203,6 @@ def upload_json(
 
 import datetime
 import json
-import sys
 
 @app.command()
 def list_activities(

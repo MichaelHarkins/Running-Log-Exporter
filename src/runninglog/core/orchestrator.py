@@ -12,7 +12,6 @@ from runninglog.utils.http_client import HttpClientFactory, RateLimiter
 from .export import write_json_workout
 from .scrape import scrape_all_wids_from_workout_list_pages, scrape_workout
 from .state import ExportState
-from .types import Workout, WorkoutSegment
 
 logger = logging.getLogger(__name__)
 console = get_console()  # Use singleton console

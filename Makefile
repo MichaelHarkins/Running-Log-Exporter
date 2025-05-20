@@ -1,21 +1,21 @@
-.PHONY: lint format test autoflake all build clean install-dev
+.PHONY: test all build clean install-dev # lint format autoflake check-format
 
-lint:
-	flake8 .
+# lint:
+# 	flake8 .
 
-format:
-	black .
-	isort .
+# format:
+# 	black .
+# 	isort .
 
-autoflake:
-	autoflake --remove-all-unused-imports --remove-unused-variables -i -r .
+# autoflake:
+# 	autoflake --remove-all-unused-imports --remove-unused-variables -i -r .
 
 test:
 	pytest
 
-check-format:
-	black --check .
-	isort --check-only .
+# check-format:
+# 	black --check .
+# 	isort --check-only .
 
 build:
 	python -m PyInstaller runninglog.spec
@@ -33,4 +33,4 @@ install-dev:
 	pip install -e ".[dev]"
 	pip install pyinstaller
 
-all: autoflake format lint check-format test
+all: test # autoflake format lint check-format

@@ -22,7 +22,7 @@ dependencies = [
     "dateparser",
     "aiofiles",
     "garminconnect",
-    "garth"
+    "garth",
 ]
 classifiers = [
     "License :: OSI Approved :: MIT License",
@@ -46,11 +46,12 @@ Issues = "https://github.com/MichaelHarkins/Running-Log-Exporter/issues"
 
 [project.optional-dependencies]
 dev = [
-    "black",
-    "flake8",
     "pytest",
-    "isort",
-    "autoflake"
+    # "black",
+    # "flake8",
+    # "isort",
+    # "autoflake",
+    # "click>=8.2.0" # click is managed by typer[all]
 ]
 
 [project.scripts]
@@ -62,5 +63,5 @@ where = ["src"]
 include = ["runninglog*"]
 
 [tool.isort]
-profile = "black"
+# profile = "black" # No longer using black
 line_length = 120

@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import List
 
-from .types import WorkoutSegment
 
 def write_json_workout(
     workout, out_path: Path

@@ -5,7 +5,7 @@ import datetime as dt
 import logging
 import re
 from pathlib import Path
-from typing import AsyncIterator, List, Optional, Set
+from typing import List, Optional, Set
 
 import httpx
 from bs4 import BeautifulSoup
