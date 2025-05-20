@@ -41,6 +41,7 @@ jobs:
           pip install pyinstaller
 
       - name: List current directory contents
+        shell: bash
         run: |
           ls -l
 
