@@ -49,15 +49,19 @@ jobs:
         run: |
           pyinstaller runninglog.spec
 
-      - name: Create zip archive
+      - name: Create zip archive (Linux/macOS)
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           cd dist
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            zip -r ${{ matrix.artifact_name }}.zip runninglog.exe
-          else
-            zip -r ${{ matrix.artifact_name }}.zip runninglog
-          fi
+          zip -r ${{ matrix.artifact_name }}.zip runninglog
+
+      - name: Create zip archive (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          cd dist
+          Compress-Archive -Path runninglog.exe -DestinationPath ${{ matrix.artifact_name }}.zip
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
